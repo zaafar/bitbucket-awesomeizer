@@ -1,0 +1,1 @@
+# bitbucket-awesomeizer
