@@ -1,0 +1,13 @@
+.comment-thread-container.ba-hidden button {
+    position: absolute;
+    z-index: 100;
+    padding:0;
+}
+
+.comment-thread-container.ba-hidden {
+    position: relative;
+    padding:0;
+}
+.ba-hidden .comments-list{
+  display: none;
+}
