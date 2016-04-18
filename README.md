@@ -14,9 +14,9 @@ You can install the working extension from the [Chrome Web Store](https://chrome
 
 1. Clone the repository: `git clone https://github.com/Biomatters/bitbucket-awesomeizer`
 1. Add bitbucket-awesomeizer to chrome.
-1.1 Open Chrome, go to preferences and choose `Extensions` in the side menu.
-1.2 Check `Developer mode` if it's not already enabled.
-1.3 Click `Load unpacked extension` and choose this repository.
+ 1. Open Chrome, go to preferences and choose `Extensions` in the side menu.
+ 1. Check `Developer mode` if it's not already enabled.
+ 1. Click `Load unpacked extension` and choose this repository.
 
 ## Development
 
