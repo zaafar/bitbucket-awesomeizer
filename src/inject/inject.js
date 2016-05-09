@@ -11,7 +11,7 @@ chrome.extension.sendMessage({}, function(response) {
   function addButtonsIfNotExist() {
     Array.prototype.slice.call(document.querySelectorAll('.comment-thread-container')).forEach(function(container) {
       if ($(container).has('button.ba-hide-comment-button').length == 0) {
-        var $toggle = $('<button class="ba-hide-comment-button">Toggle comment</button>')
+        var $toggle = $('<button class="ba-hide-comment-button">Toggle comment</button>');
         $(container).prepend($toggle);
       }
     });
@@ -28,5 +28,6 @@ chrome.extension.sendMessage({}, function(response) {
   });
 
   setInterval(addButtonsIfNotExist, 2000);
-  console.log('bitbucket awesomizer loaded')
+
+  console.log('Bitbucket Awesomizer loaded');
 });
