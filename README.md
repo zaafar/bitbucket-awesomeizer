@@ -1,32 +1,37 @@
-# Bitbucket Awesomeizer
+# Bitbucket Awesomizer
 
-Bitbucket Awesomizer makes your bitbucket experience awesome. Enables toggling of comment visibility when reviewing bitbucket pull requests.
+Bitbucket Awesomizer makes your Bitbucket experience awesome;
 
-## Distribution
+- Hide pull request comments with "Resolved." mentioned anywhere in the thread
+- Adds a "toggle" button to show or hide visibility the comment thread
+- Adds a "resolve" button to mark a thread as resolved (by adding a comment "Resolved.")
 
-You can install the working extension from the [Chrome Web Store](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi)
+Install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi).
 
 ## Requirements
 
 - [Chrome web browser](https://www.google.com/chrome/browser/desktop/)
 
-## Installation
+## Contributing
 
-1. Clone the repository: `git clone https://github.com/Biomatters/bitbucket-awesomeizer`
-1. Add bitbucket-awesomeizer to chrome.
-1.1 Open Chrome, go to preferences and choose `Extensions` in the side menu.
-1.2 Check `Developer mode` if it's not already enabled.
-1.3 Click `Load unpacked extension` and choose this repository.
+  1. Submit a pull request
+  1. Tag @ohwo as a reviewer
 
 ## Development
 
-* Any IDE is fine.
-* Currently 2x files are injected into the user's web browser; `inject.js` and `inject.css`.
+Only 2x files are injected into the user's web browser; `inject.js` and `inject.css`.
+
+Install (for development);
+
+  1. In Chrome; Window menu > Extensions
+  1. Check "Developer mode"
+  1. Click "Load unpacked extension"
+  1. Select your clone of this repository
 
 ## Deployment
-1. Compress the repository into a zip file.
-2. Go to https://chrome.google.com/webstore/developer/dashboard and upload the zip file. Currently this version of the extension is registered to `obodley@gmail.com`'s account
 
-## Contributing
+Currently only the author (`obodley@gmail.com`) can update the existing app.
 
-1. Submit a pull request and tag @ohwo as a reviewer.
+  1. Compress the repository into a zip file.
+  2. Go to https://chrome.google.com/webstore/developer/dashboard
+  3. Upload the zip file

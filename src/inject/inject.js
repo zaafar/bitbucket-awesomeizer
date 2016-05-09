@@ -1,15 +1,12 @@
-chrome.extension.sendMessage({}, function (response) {
-    var readyStateCheckInterval = setInterval(function () {
-        if (document.readyState === "complete") {
-            clearInterval(readyStateCheckInterval);
+chrome.extension.sendMessage({}, function(response) {
+  var readyStateCheckInterval = setInterval(function() {
+    if (document.readyState === "complete") {
+      // This runs when page is done loading.
 
-            // ----------------------------------------------------------
-            // This part of the script triggers when page is done loading
-            console.log("Hello. This message was sent from scripts/inject.js");
-            // ----------------------------------------------------------
-
-        }
-    }, 10);
+      // TODO Document whe the interval is cleared.
+      clearInterval(readyStateCheckInterval);
+    }
+  }, 10);
 
     var COMMENT_TITLE = 'Toggle comments ';
 
@@ -24,7 +21,7 @@ chrome.extension.sendMessage({}, function (response) {
                 $(container).prepend($toggle);
             }
             // Do this no matter whether we're adding the button or not - always needs to be updated
-            // because the numebr of comments could have changed.
+            // because the number of comments could have changed.
             var commentsCount = $(container).find('.comment').length;
             $(container).find('button.ba-hide-comment-button').text(COMMENT_TITLE + '(' + commentsCount + ')');
         });
@@ -63,7 +60,7 @@ chrome.extension.sendMessage({}, function (response) {
     $(document).on('click', 'button.ba-resolve-button', function (e) {
         var container = $(e.target).closest('.comment-thread-container');
         var replyButton = $(container).find('.reply-link.execute.click')[0];
-        replyButton.click()
+        replyButton.click();
         container.find('#id_new_comment').text('Resolved. This thread was resolved by Bitbucket Awesomizer. [Download from the chrome webstore and make bitbucket awesome!](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi?authuser=1)');
         var submitButton = container.find('button[type="submit"].aui-button');
         submitButton.trigger('click');
