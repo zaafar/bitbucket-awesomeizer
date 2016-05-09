@@ -73,5 +73,5 @@ chrome.extension.sendMessage({}, function(response) {
         hideResolved();
     }, 2000);
 
-    console.log('bitbucket awesomizer loaded')
+    console.log('Bitbucket Awesomizer loaded')
 });
