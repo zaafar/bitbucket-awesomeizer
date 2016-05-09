@@ -8,22 +8,20 @@ chrome.extension.sendMessage({}, function(response) {
         }
     }, 10);
 
-    var COMMENT_TITLE = 'Toggle comments ';
-
     /**
      * Add buttons for toggling comment visibility to each comment thread container.
      */
     function addButtonsIfNotExist() {
-        [].slice.call(document.querySelectorAll('.comment-thread-container')).forEach(function(container) {
+        document.querySelectorAll('.comment-thread-container').forEach(function(container) {
             if ($(container).has('button.ba-hide-comment-button').length == 0) {
-                var resolveButton = container.innerText.toLowerCase().indexOf('resolved.') == -1 ? '<button class="ba-resolve-button">resolve</button>' : '';
+                var resolveButton = container.innerText.toLowerCase().indexOf('resolved.') == -1 ? '<button class="ba-resolve-button">Resolve</button>' : '';
                 var $toggle = $('<div class="ba-container"><button class="ba-hide-comment-button"></button>' + resolveButton + '</div>');
                 $(container).prepend($toggle);
             }
             // Do this no matter whether we're adding the button or not - always needs to be updated
             // because the number of comments could have changed.
             var commentsCount = $(container).find('.comment').length;
-            $(container).find('button.ba-hide-comment-button').text(COMMENT_TITLE + '(' + commentsCount + ')');
+            $(container).find('button.ba-hide-comment-button').text('Toggle ' + commentsCount + ' comments)');
         });
     }
 
@@ -61,7 +59,7 @@ chrome.extension.sendMessage({}, function(response) {
         var container = $(e.target).closest('.comment-thread-container');
         var replyButton = $(container).find('.reply-link.execute.click')[0];
         replyButton.click();
-        container.find('#id_new_comment').text('Resolved. This thread was resolved by Bitbucket Awesomizer. [Download from the chrome webstore and make bitbucket awesome!](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi?authuser=1)');
+        container.find('#id_new_comment').text('[Resolved.](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi "Resolved with Bitbucket Awesomizr")');
         var submitButton = container.find('button[type="submit"].aui-button');
         submitButton.trigger('click');
         // $(e.target).remove();
