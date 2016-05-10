@@ -1,75 +1,114 @@
 chrome.extension.sendMessage({}, function(response) {
-    var readyStateCheckInterval = setInterval(function() {
-        if (document.readyState === "complete") {
-            // This runs when page is done loading.
+    // TODO Refactor as a jQuery plugin, and apply it to each comment thread container element, such that `this` is the container element.  This is probably simpler code, but may be less performant (with polling)?
 
-            // TODO Document why the interval is cleared.
-            clearInterval(readyStateCheckInterval);
-        }
-    }, 10);
+    var link = 'https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi';
+    var commentMarkdown = `[Resolved.](${link} "Resolved with Bitbucket Awesomizr")`;
+
+    function init() {
+        // Handles click events on "toggle" buttons.
+        // TODO As a jQuery plugin, this attaches to the button when it is created.
+        $(document).on('click', 'button.ba-hide-comment-button', e => {
+            var $container = getClosestThreadContainer(e.target);
+
+            // Mark the thread as "overridden".
+            $container.addClass('user-override');
+
+            updateUi($container);
+        });
+
+        // Handles click events on "resolve" buttons.
+        // TODO As a jQuery plugin, this attaches to the button when it is created.
+        $(document).on('click', 'button.ba-resolve-button', e => {
+            var $container = getClosestThreadContainer(e.target);
+            $container.find('.reply-link.execute.click')[0].click();
+            $container.find('#id_new_comment').text(commentMarkdown);
+            $container.find('button[type="submit"].aui-button').click();
+            $container.find('button.ba-resolve-button').remove();
+
+            updateUi($container);
+        });
+
+        // Process all comment threads every 2 seconds.
+        // TODO Find a way to listen to Bitbucket's events.
+        // TODO As a jQuery plugin, each instance of the plugin is responsible for polling its own thread.  This global poller only instantiates new threads.
+        // TODO Now that we have a "Resolved" button, does it make sense to automatically close threads that have received a "Resolved." comment manually?
+        setInterval(() => {
+            $('.comment-thread-container').each((index, container) => {
+                var $container = $(container);
+                var resolved = $container.text().toLowerCase().indexOf('resolved.') >= 0;
+
+                if (resolved && !$container.hasClass('user-override') && !$container.hasClass('ba-hidden')) {
+                    // Hide all comments with the text `resolved.`, but not overridden.
+                    // This also updates the buttons.
+                    updateUi($container, resolved);
+                }
+                else {
+                    // Only update the buttons.
+                    updateButtons($container, resolved);
+                }
+            });
+        }, 2000);
+    }
+
+    function updateUi($container, resolved = null) {
+        updateVisibility($container).then($container => updateButtons($container, resolved));
+    }
 
     /**
-     * Add buttons for toggling comment visibility to each comment thread container.
+     * Shows or hides a comment thread container.
      */
-    function addButtonsIfNotExist() {
-        document.querySelectorAll('.comment-thread-container').forEach(function(container) {
-            if ($(container).has('button.ba-hide-comment-button').length == 0) {
-                var resolveButton = container.innerText.toLowerCase().indexOf('resolved.') == -1 ? '<button class="ba-resolve-button">Resolve</button>' : '';
-                var $toggle = $('<div class="ba-container"><button class="ba-hide-comment-button"></button>' + resolveButton + '</div>');
-                $(container).prepend($toggle);
+    function updateVisibility($container) {
+        var classList = $container[0].classList;
+        var $comments = $container.find('.comments-list');
+        return new Promise(resolve => {
+            // Always toggle the "hidden" class when the comments are slid-up.
+            var toggleHiddenClass = () => {
+                classList.toggle('ba-hidden');
+                resolve($container);
+            };
+
+            if (classList.contains('ba-hidden')) {
+                // Show the comments.
+                toggleHiddenClass();
+                $comments.slideDown();
             }
-            // Do this no matter whether we're adding the button or not - always needs to be updated
-            // because the number of comments could have changed.
-            var commentsCount = $(container).find('.comment').length;
-            $(container).find('button.ba-hide-comment-button').text('Toggle ' + commentsCount + ' comments)');
+            else {
+                // Hide the comments.
+                $comments.slideUp(toggleHiddenClass);
+            }
         });
     }
 
     /**
-     * Hide all comments that have the text `resolved.` in them.
-     *  - ignores buttons that the user has clicked, indicated by `user-override`.
-     *
-     * Case insensitive.
+     * Adds buttons for toggling comment visibility to each comment thread container.
      */
-    function hideResolved() {
-        [].slice.call(document.querySelectorAll('.comment-thread-container')).forEach(function(container) {
-            if (container.innerText.toLowerCase().indexOf('resolved.') != -1 && !$(container).hasClass('user-override')) {
-                $(container).addClass('ba-hidden');
-            }
-        });
+    function updateButtons($container, resolved = null) {
+        if ($container.has('button.ba-hide-comment-button').length == 0) {
+            initializeButtons($container, resolved);
+        }
+
+        // Set or update the "Toggle" button's text.
+        $container.find('button.ba-hide-comment-button').text(toggleButtonText($container));
     }
 
-    /**
-     * Handles clicks on the toggle buttons which are prepended to each comment thread container.
-     */
-    $(document).on('click', 'button.ba-hide-comment-button', function handleToggleButtonClick(e) {
-        var threadContainer = $(e.target).closest('.comment-thread-container');
-        var visible = !threadContainer.hasClass('ba-hidden');
-        if (visible) {
-            $(threadContainer).addClass('ba-hidden').addClass('user-override');
-        } else {
-            $(threadContainer).removeClass('ba-hidden').addClass('user-override');
-        }
-    });
+    function toggleButtonText($container) {
+        var action = $container[0].classList.contains('ba-hidden') ? 'Show' : 'Hide';
+        var count = $container.find('.comment').length;
+        var noun = count > 1 ? 'comments' : 'comment';
+        return `${action} ${count} ${noun}`;
+    }
 
-    /**
-     * Handles clicks on the resolve buttons which are prepended to each comment thread container.
-     */
-    $(document).on('click', 'button.ba-resolve-button', function(e) {
-        var container = $(e.target).closest('.comment-thread-container');
-        var replyButton = $(container).find('.reply-link.execute.click')[0];
-        replyButton.click();
-        container.find('#id_new_comment').text('[Resolved.](https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi "Resolved with Bitbucket Awesomizr")');
-        var submitButton = container.find('button[type="submit"].aui-button');
-        submitButton.trigger('click');
-        // $(e.target).remove();
-    });
+    function initializeButtons($container, resolved) {
+        // The "toggle" button's label is set in updateButtons.
+        var toggle = '<button class="ba-hide-comment-button">Toggle</button>';
+        var resolve = resolved ? '' : '<button class="ba-resolve-button">Resolve</button>';
+        $container.prepend(`<div class="ba-container">${toggle} ${resolve}</div>`);
+    }
 
-    // We don't yet have a way to be event-driven, so need to poll for changes.
-    setInterval(function() {
-        addButtonsIfNotExist();
-        hideResolved();
-    }, 2000);
+    function getClosestThreadContainer(element) {
+        return $(element).closest('.comment-thread-container');
+    }
 
-    console.log('Bitbucket Awesomizer loaded')
+    init();
+    console.log('Bitbucket Awesomizer loaded');
 });
