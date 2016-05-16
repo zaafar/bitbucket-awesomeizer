@@ -1,10 +1,10 @@
-.comment-thread-container{
+.comment-thread-container {
   position: relative;
 }
 
 .comment-thread-container.ba-hidden {
   position: relative;
-  padding:0;
+  padding: 0;
 }
 
 .comment-thread-container .ba-container {
@@ -14,7 +14,7 @@
   left: 10px;
 }
 
-.ba-hidden .comments-list{
+.ba-hidden .comments-list {
   display: none;
 }
 .ba-hidden .ba-resolve-button {
