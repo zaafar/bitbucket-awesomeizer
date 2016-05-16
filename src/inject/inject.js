@@ -1,4 +1,4 @@
-chrome.extension.sendMessage({}, function(response) {
+chrome.extension.sendMessage({}, function (response) {
     // TODO Refactor as a jQuery plugin, and apply it to each comment thread container element, such that `this` is the container element.  This is probably simpler code, but may be less performant (with polling)?
 
     var link = 'https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi';
@@ -70,11 +70,11 @@ chrome.extension.sendMessage({}, function(response) {
             if (classList.contains('ba-hidden')) {
                 // Show the comments.
                 toggleHiddenClass();
-                $comments.slideDown();
+                $comments.slideDown(100);
             }
             else {
                 // Hide the comments.
-                $comments.slideUp(toggleHiddenClass);
+                $comments.slideUp(100, toggleHiddenClass);
             }
         });
     }
