@@ -34,6 +34,14 @@
         "src/inject/inject.js"
 
       ]
+    },
+    {
+        "matches": [
+            "https://bitbucket.org/*/pull-requests/new*"
+        ],
+        "js": [
+            "src/new-pr.js"
+        ]
     }
   ],
   "permissions": [
