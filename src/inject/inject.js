@@ -4,6 +4,51 @@ chrome.extension.sendMessage({}, function (response) {
     var link = 'https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi';
     var commentMarkdown = `[Resolved.](${link} "Resolved with Bitbucket Awesomizr")`;
 
+    ////// BRANCH RENAMING ////////
+
+    /**
+     * Polls the page title if it exists.
+     */
+    var reference = setInterval(() => {
+        var input = document.querySelector('#id_title');
+        if (input) {
+            var title = input.value;
+            var titleIsBranch = titleIsBranchName(title);
+            if (titleIsBranch) {
+                input.value = reformatBranchName(title);
+            }
+        }
+        // Stop polling if there is no page title element or if we've found a match
+        if (!input || titleIsBranch) {
+            clearInterval(reference);
+        }
+    }, 300);
+
+    /**
+     * Tests if the given title matches the format of a branch name (which is the default value for PRs).
+     *
+     * @param title {String} The ticket title, e.g. "BA-625-bug-hide-ag-grid-until-selections"
+     * @returns {boolean} If the ticket title is the branch name.
+     */
+    function titleIsBranchName(title) {
+        var matches = title.match(/(([A-Z,a-z,0-9]+)-?)+/);
+        return matches.length > 0;
+    }
+
+    /**
+     * @param branch {String} The branch name, e.g. "BA-625-bug-hide-ag-grid-until-selections"
+     * @returns {*} The ticket name, e.g. "BA-625".
+     */
+    function reformatBranchName(branch) {
+        var matches = branch.match(/^BA-[0-9]+/);
+        if (matches) {
+            var ticket = matches[0];
+            var name = branch.replace(ticket, '').replace('-', '').trim();
+            name = name.charAt(0).toUpperCase() + name.substring(1);
+            return ticket + ' ' + name;
+        }
+    }
+
     function init() {
         // Handles click events on "toggle" buttons.
         // TODO As a jQuery plugin, this attaches to the button when it is created.
