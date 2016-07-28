@@ -1,6 +1,6 @@
 {
   "name": "Bitbucket Awesomizer",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "manifest_version": 2,
   "description": "Mark Bitbucket pull request comments as resolved and hide the comment thread.",
   "homepage_url": "https://github.com/Biomatters/bitbucket-awesomeizer",
