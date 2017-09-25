@@ -1,8 +1,8 @@
 chrome.extension.sendMessage({}, function (response) {
     // TODO Refactor as a jQuery plugin, and apply it to each comment thread container element, such that `this` is the container element.  This is probably simpler code, but may be less performant (with polling)?
 
-    var link = 'https://chrome.google.com/webstore/detail/bitbucket-awesomizer/fpcpncnhbbmlmhgicafejpabkdjenloi';
-    var commentMarkdown = `[Resolved.](${link} "Resolved with Bitbucket Awesomizr")`;
+    var link = 'https://github.com/zaafar/bitbucket-awesomeizer';
+    var commentMarkdown = `[\[==resolved==\]](${link})`;
 
     function init() {
         // Handles click events on "toggle" buttons.
@@ -21,11 +21,22 @@ chrome.extension.sendMessage({}, function (response) {
         $(document).on('click', 'button.ba-resolve-button', e => {
             var $container = getClosestThreadContainer(e.target);
             $container.find('.reply-link.execute.click')[0].click();
-            $container.find('#id_new_comment').text(commentMarkdown);
-            $container.find('button[type="submit"].aui-button').click();
-            $container.find('button.ba-resolve-button').remove();
-
-            updateUi($container);
+            var isoldEditor = $container.find('#id_new_comment').length >= 1;
+            if (isoldEditor) {
+                $container.find('#id_new_comment').text(commentMarkdown);
+                $container.find('button[type="submit"].aui-button').click();
+                $container.find('button.ba-resolve-button').remove();
+                updateUi($container);
+                return;
+            }
+            if ($container.find('div.ProseMirror').length == 0) {
+                setTimeout(() => {
+                    $container.find('div.ProseMirror')[0].innerText = commentMarkdown;
+                    setTimeout(() => {
+                        $container.find('div.kiWdJV')[0].childNodes[0].click();
+                    },50);
+                },50);
+            }
         });
 
         // Process all comment threads every 2 seconds.
@@ -35,7 +46,7 @@ chrome.extension.sendMessage({}, function (response) {
         setInterval(() => {
             $('.comment-thread-container').each((index, container) => {
                 var $container = $(container);
-                var resolved = $container.text().toLowerCase().indexOf('resolved.') >= 0;
+                var resolved = $container.text().toLowerCase().indexOf('[==resolved==]') >= 0;
 
                 if (resolved && !$container.hasClass('user-override') && !$container.hasClass('ba-hidden')) {
                     // Hide all comments with the text `resolved.`, but not overridden.
@@ -95,7 +106,7 @@ chrome.extension.sendMessage({}, function (response) {
         var action = $container[0].classList.contains('ba-hidden') ? 'Show' : 'Hide';
         var count = $container.find('.comment').length;
         var noun = count > 1 ? 'comments' : 'comment';
-        return `${action} ${count} ${noun}`;
+        return `${action}(${count})`;
     }
 
     function initializeButtons($container, resolved) {
@@ -110,5 +121,5 @@ chrome.extension.sendMessage({}, function (response) {
     }
 
     init();
-    console.log('Bitbucket Awesomizer loaded');
+    console.log('Bitbucket Helper loaded');
 });

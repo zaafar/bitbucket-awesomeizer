@@ -1,9 +1,9 @@
 {
-  "name": "Bitbucket Awesomizer",
-  "version": "0.0.10",
+  "name": "Bitbucket Helper",
+  "version": "0.0.13",
   "manifest_version": 2,
   "description": "Mark Bitbucket pull request comments as resolved and hide the comment thread.",
-  "homepage_url": "https://github.com/Biomatters/bitbucket-awesomeizer",
+  "homepage_url": "https://github.com/zaafar/bitbucket-awesomeizer",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

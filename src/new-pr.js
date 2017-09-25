@@ -26,7 +26,7 @@ chrome.extension.sendMessage({}, response => {
         if (corrected) {
             clearInterval(watcher);
             inputElement.value = corrected;
-            console.log(`Bitbucket Awesomizer fixed badly formatted Jira issue key.  It was "${old}"`);
+            console.log(`Bitbucket Helper fixed badly formatted Jira issue key.  It was "${old}"`);
         }
     }
 
