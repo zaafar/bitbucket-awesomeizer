@@ -33,9 +33,9 @@ chrome.extension.sendMessage({}, function (response) {
                 setTimeout(() => {
                     $container.find('div.ProseMirror')[0].innerText = commentMarkdown;
                     setTimeout(() => {
-                        $container.find('div.kiWdJV')[0].childNodes[0].click();
-                    },50);
-                },50);
+                        $container.find('.dwVXlo')[0].childNodes[0].click();
+                    }, 50);
+                }, 50);
             }
         });
 
