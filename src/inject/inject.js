@@ -48,6 +48,13 @@ chrome.extension.sendMessage({}, function (response) {
                 var $container = $(container);
                 var resolved = $container.text().toLowerCase().indexOf('[==resolved==]') >= 0;
 
+                var hidden_comments_list = getLocalStorageItem();
+                var current_comment_key = getLocalStorageKey($container);
+                var isHiddenComment = hidden_comments_list.indexOf(current_comment_key) > -1;
+                if (isHiddenComment) {
+                    resolved = true;
+                }
+
                 if (resolved && !$container.hasClass('user-override') && !$container.hasClass('ba-hidden')) {
                     // Hide all comments with the text `resolved.`, but not overridden.
                     // This also updates the buttons.
@@ -61,6 +68,45 @@ chrome.extension.sendMessage({}, function (response) {
         }, 2000);
     }
 
+    function getLocalStorageKey(container) {
+        var comment_list = container.find('.comments-list');
+        var comments = comment_list.find('.comment');
+        var first_comment_id = comments[0].firstElementChild.id;
+        var total_comments = comments.length;
+        return first_comment_id + total_comments;
+    }
+
+    function getLocalStorageItem() {
+        var hidden_comments_list = localStorage.getItem('hidden_comments_list');
+        if (hidden_comments_list) {
+            return JSON.parse(hidden_comments_list);
+        }
+        return [];
+    }
+
+    function addToLocalStorage(comment_id) {
+        old_hidden_comments = getLocalStorageItem();
+        if (old_hidden_comments.indexOf(comment_id) < 0) {
+            old_hidden_comments.push(comment_id);
+        }
+
+        new_hidden_comments = JSON.stringify(old_hidden_comments);
+        localStorage.setItem('hidden_comments_list', new_hidden_comments);
+    }
+
+    function removeFromLocalStorage(comment_id) {
+        var index = getLocalStorageItem().indexOf(comment_id);
+        if (index >= 0) {
+            var hidden_comments_list = getLocalStorageItem();
+            hidden_comments_list.splice(index, 1);
+            if (hidden_comments_list) {
+                localStorage.setItem('hidden_comments_list', JSON.stringify(hidden_comments_list));
+            } else {
+                localStorage.setItem('hidden_comments_list', "[]");
+            }
+        }
+    }
+
     function updateUi($container, resolved = null) {
         updateVisibility($container).then($container => updateButtons($container, resolved));
     }
@@ -70,22 +116,28 @@ chrome.extension.sendMessage({}, function (response) {
      */
     function updateVisibility($container) {
         var classList = $container[0].classList;
-        var $comments = $container.find('.comments-list');
+        var comment_list = $container.find('.comments-list');
+        var current_comment_key = getLocalStorageKey($container);
         return new Promise(resolve => {
             // Always toggle the "hidden" class when the comments are slid-up.
             var toggleHiddenClass = () => {
                 classList.toggle('ba-hidden');
+                if ($container.hasClass('ba-hidden')) {
+                    addToLocalStorage(current_comment_key);
+                } else {
+                    removeFromLocalStorage(current_comment_key);
+                }
                 resolve($container);
             };
 
             if (classList.contains('ba-hidden')) {
-                // Show the comments.
+                // Show the comment list.
                 toggleHiddenClass();
-                $comments.slideDown(100);
+                comment_list.slideDown(100);
             }
             else {
-                // Hide the comments.
-                $comments.slideUp(100, toggleHiddenClass);
+                // Hide the comment list.
+                comment_list.slideUp(100, toggleHiddenClass);
             }
         });
     }
@@ -105,7 +157,6 @@ chrome.extension.sendMessage({}, function (response) {
     function toggleButtonText($container) {
         var action = $container[0].classList.contains('ba-hidden') ? 'Show' : 'Hide';
         var count = $container.find('.comment').length;
-        var noun = count > 1 ? 'comments' : 'comment';
         return `${action}(${count})`;
     }
 
