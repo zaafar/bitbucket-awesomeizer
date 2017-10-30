@@ -1,6 +1,6 @@
 {
   "name": "Bitbucket Helper",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "manifest_version": 2,
   "description": "Mark Bitbucket pull request comments as resolved and hide the comment thread.",
   "homepage_url": "https://github.com/zaafar/bitbucket-awesomeizer",

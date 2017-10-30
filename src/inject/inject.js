@@ -120,6 +120,7 @@ chrome.extension.sendMessage({}, function (response) {
     function updateVisibility($container) {
         var classList = $container[0].classList;
         var comment_list = $container.find('.comments-list');
+        var is_last_comment = $container[0].nextElementSibling == null;
         var current_comment_key = getLocalStorageKey($container);
         return new Promise(resolve => {
             // Always toggle the "hidden" class when the comments are slid-up.
@@ -127,8 +128,12 @@ chrome.extension.sendMessage({}, function (response) {
                 classList.toggle('ba-hidden');
                 if ($container.hasClass('ba-hidden')) {
                     addToLocalStorage(current_comment_key);
+                    if (is_last_comment)
+                        $container[0].style.paddingTop = "30px";
                 } else {
                     removeFromLocalStorage(current_comment_key);
+                    if (is_last_comment)
+                        $container[0].style.paddingTop = "";
                 }
                 resolve($container);
             };
