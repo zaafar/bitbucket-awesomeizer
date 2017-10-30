@@ -87,6 +87,9 @@ chrome.extension.sendMessage({}, function (response) {
     function addToLocalStorage(comment_id) {
         old_hidden_comments = getLocalStorageItem();
         if (old_hidden_comments.indexOf(comment_id) < 0) {
+            // Making sure list never increase a specific size.
+            if (old_hidden_comments.length >= 500)
+                old_hidden_comments.shift();
             old_hidden_comments.push(comment_id);
         }
 
